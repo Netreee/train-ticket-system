@@ -1,0 +1,24 @@
+# IDE 相关
+.idea/
+.vs/
+*.user
+*.suo
+*.sln.docstates
+
+# 编译输出
+*.exe
+*.obj
+*.o
+*.dll
+*.so
+*.dylib
+
+# 调试文件
+*.pdb
+*.ilk
+*.exp
+
+# 其他
+*.log
+*.tmp
+.DS_Store 
