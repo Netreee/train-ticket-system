@@ -38,8 +38,12 @@ namespace trainsys {
     public:
         explicit BPlusTree(const std::string &name) {
             treeNodeFileName = name + "_treeNodeFile", leafFileName = name + "_leafFile";
-            treeNodeFile.open(treeNodeFileName);
-            leafFile.open(leafFileName);
+            // 原实现 ↓（文本模式，换行转换会破坏二进制数据）
+            // treeNodeFile.open(treeNodeFileName);
+            // leafFile.open(leafFileName);
+            treeNodeFile.open(treeNodeFileName, std::ios::in | std::ios::out | std::ios::binary);
+            leafFile.open(leafFileName, std::ios::in | std::ios::out | std::ios::binary);
+            
             if (!leafFile || !treeNodeFile) {
                 initialize();
             } else {
@@ -444,12 +448,16 @@ namespace trainsys {
         }
 
         void writeTreeNode(TreeNode &node) {
-            treeNodeFile.seekg(node.pos * sizeof(TreeNode) + headerLengthOfTreeNodeFile);
+            // 原实现 ↓（用 get 指针）
+            // treeNodeFile.seekg(node.pos * sizeof(TreeNode) + headerLengthOfTreeNodeFile);
+            treeNodeFile.seekp(node.pos * sizeof(TreeNode) + headerLengthOfTreeNodeFile);
             treeNodeFile.write(reinterpret_cast<char *>(&node), sizeof(TreeNode));
         }
 
         void writeLeaf(Leaf &leaf) {
-            leafFile.seekg(leaf.pos * sizeof(Leaf) + headerLengthOfLeafFile);
+            // 原实现 ↓
+            // leafFile.seekg(leaf.pos * sizeof(Leaf) + headerLengthOfLeafFile);
+            leafFile.seekp(leaf.pos * sizeof(Leaf) + headerLengthOfLeafFile);
             leafFile.write(reinterpret_cast<char *>(&leaf), sizeof(Leaf));
         }
 
@@ -504,8 +512,11 @@ namespace trainsys {
         }
 
         void initialize() {
-            treeNodeFile.open(treeNodeFileName, std::ios::out);
-            leafFile.open(leafFileName, std::ios::out);
+            // 原实现 ↓
+            // treeNodeFile.open(treeNodeFileName, std::ios::out);
+            // leafFile.open(leafFileName, std::ios::out);
+            treeNodeFile.open(treeNodeFileName, std::ios::out | std::ios::binary | std::ios::trunc);
+            leafFile.open(leafFileName, std::ios::out | std::ios::binary | std::ios::trunc);
             root.isBottomNode = (root.pos = (root.childrenPos[0] = 1)), sizeData = 0;
             root.dataCount = 1;
             rearLeaf = rearTreeNode = 1;
@@ -515,8 +526,11 @@ namespace trainsys {
             writeLeaf(initLeaf);
             treeNodeFile.close();
             leafFile.close();
-            treeNodeFile.open(treeNodeFileName);
-            leafFile.open(leafFileName);
+            // 原实现 ↓
+            // treeNodeFile.open(treeNodeFileName);
+            // leafFile.open(leafFileName);
+            treeNodeFile.open(treeNodeFileName, std::ios::in | std::ios::out | std::ios::binary);
+            leafFile.open(leafFileName, std::ios::in | std::ios::out | std::ios::binary);
         }
 
         int getNewTreeNodePos() {
