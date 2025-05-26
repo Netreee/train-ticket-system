@@ -21,19 +21,29 @@ namespace trainsys {
         memcpy(this->password, rhs.password, MAX_PASSWORD_LEN + 1);
     }
 
-    UserInfo &UserInfo::operator =(const UserInfo &rhs) {
-        /* Question */
+    UserInfo& UserInfo::operator =(const UserInfo& rhs) {
+        if (this != &rhs) {
+            this->userID = rhs.userID;
+            this->privilege = rhs.privilege;
+            memcpy(this->username, rhs.username, MAX_USERNAME_LEN + 1);
+            memcpy(this->password, rhs.password, MAX_PASSWORD_LEN + 1);
+        }
+        return *this;
     }
 
-    bool UserInfo::operator ==(const UserInfo &rhs) const {
-        /* Question */
+    bool UserInfo::operator ==(const UserInfo& rhs) const {
+        return userID == rhs.userID &&
+            strcmp(username, rhs.username) == 0 &&
+            strcmp(password, rhs.password) == 0 &&
+            privilege == rhs.privilege;
     }
 
-    bool UserInfo::operator !=(const UserInfo &rhs) const {
-        /* Question */
+    bool UserInfo::operator !=(const UserInfo& rhs) const {
+        return !(*this == rhs);
     }
 
-    bool UserInfo::operator <(const UserInfo &rhs) const {
-        /* Question */
+    bool UserInfo::operator <(const UserInfo& rhs) const {
+        return userID < rhs.userID;
     }
 } // namespace trainsys
+
