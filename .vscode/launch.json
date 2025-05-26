@@ -2,17 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Test",
+            "name": "调试 BPlusTree 测试",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/test_scheduler",
+            "program": "${workspaceFolder}/test_bplustree.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "D:\\msys2\\mingw64\\bin\\gdb.exe",
+            "miDebuggerPath": "gdb",
             "setupCommands": [
                 {
                     "description": "为 gdb 启用整齐打印",
@@ -25,20 +25,37 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "build test"
+            "preLaunchTask": "编译 BPlusTree 测试",
+            "console": "integratedTerminal"
         },
         {
-            "name": "Debug Hello",
+            "name": "运行 BPlusTree 测试（无调试）",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/hello",
+            "program": "${workspaceFolder}/test_bplustree.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "D:\\msys2\\mingw64\\bin\\gdb.exe",
+            "miDebuggerPath": "gdb",
+            "preLaunchTask": "编译 BPlusTree 测试",
+            "console": "integratedTerminal",
+            "noDebug": true
+        },
+        {
+            "name": "调试主程序",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
             "setupCommands": [
                 {
                     "description": "为 gdb 启用整齐打印",
@@ -51,7 +68,24 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "build hello"
+            "preLaunchTask": "编译 main 程序",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "运行主程序（无调试）",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "preLaunchTask": "编译 main 程序",
+            "console": "integratedTerminal",
+            "noDebug": true
         }
     ]
-} 
+}

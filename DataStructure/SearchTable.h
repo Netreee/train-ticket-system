@@ -1,6 +1,8 @@
 #ifndef SEARCH_TABLE_H_
 #define SEARCH_TABLE_H_
 
+#include "List.h"
+
 namespace trainsys {
     template<class KeyType, class ValueType>
     struct DataType {

@@ -5,6 +5,7 @@
 #include <fstream>
 #include "Pair.h"
 #include "SearchTable.h"
+#include "List.h"
 
 namespace trainsys {
     template<class KeyType, class ValueType, int M = 100, int L = 100>
@@ -505,7 +506,7 @@ namespace trainsys {
         void initialize() {
             treeNodeFile.open(treeNodeFileName, std::ios::out);
             leafFile.open(leafFileName, std::ios::out);
-            root.isBottomNode = root.pos = root.childrenPos[0] = 1, sizeData = 0;
+            root.isBottomNode = (root.pos = (root.childrenPos[0] = 1)), sizeData = 0;
             root.dataCount = 1;
             rearLeaf = rearTreeNode = 1;
             Leaf initLeaf;
