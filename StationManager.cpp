@@ -22,10 +22,10 @@ namespace trainsys {
     }
 
     String StationManager::getStationName(const StationID &stationID) {
-        /* Question */
+        return idToName.find(stationID);
     }
 
     StationID StationManager::getStationID(const char *stationName) {
-        /* Question */
+        return nameToID.find(String(stationName));
     }
 }
