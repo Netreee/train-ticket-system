@@ -38,8 +38,8 @@ namespace trainsys {
     public:
         explicit BPlusTree(const std::string &name) {
             treeNodeFileName = name + "_treeNodeFile", leafFileName = name + "_leafFile";
-            treeNodeFile.open(treeNodeFileName);
-            leafFile.open(leafFileName);
+            treeNodeFile.open(treeNodeFileName, std::ios::in | std::ios::out | std::ios::binary);
+            leafFile.open(leafFileName, std::ios::in | std::ios::out | std::ios::binary);
             if (!leafFile || !treeNodeFile) {
                 initialize();
             } else {
@@ -444,7 +444,7 @@ namespace trainsys {
         }
 
         void writeTreeNode(TreeNode &node) {
-            treeNodeFile.seekg(node.pos * sizeof(TreeNode) + headerLengthOfTreeNodeFile);
+            treeNodeFile.seekp(node.pos * sizeof(TreeNode) + headerLengthOfTreeNodeFile);
             treeNodeFile.write(reinterpret_cast<char *>(&node), sizeof(TreeNode));
         }
 
@@ -504,19 +504,38 @@ namespace trainsys {
         }
 
         void initialize() {
-            treeNodeFile.open(treeNodeFileName, std::ios::out);
-            leafFile.open(leafFileName, std::ios::out);
-            root.isBottomNode = (root.pos = (root.childrenPos[0] = 1)), sizeData = 0;
+            treeNodeFile.open(treeNodeFileName, std::ios::out | std::ios::binary);
+            leafFile.open(leafFileName, std::ios::out | std::ios::binary);
+
+            int rootPos = 1;
+            rearTreeNode = 1;
+            rearLeaf = 1;
+            sizeData = 0;
+
+            treeNodeFile.write(reinterpret_cast<char*>(&rootPos), sizeof(int));
+            treeNodeFile.write(reinterpret_cast<char*>(&rearTreeNode), sizeof(int));
+
+            leafFile.write(reinterpret_cast<char*>(&rearLeaf), sizeof(int));
+            leafFile.write(reinterpret_cast<char*>(&sizeData), sizeof(int));
+
+            root.pos = rootPos;
+            root.isBottomNode = true;
             root.dataCount = 1;
-            rearLeaf = rearTreeNode = 1;
-            Leaf initLeaf;
-            initLeaf.nxt = initLeaf.dataCount = 0;
+            root.childrenPos[0] = 1;
+
+            Leaf initLeaf{};
+            initLeaf.nxt = 0;
+            initLeaf.dataCount = 0;
             initLeaf.pos = 1;
+
             writeLeaf(initLeaf);
+            writeTreeNode(root);
+
             treeNodeFile.close();
             leafFile.close();
-            treeNodeFile.open(treeNodeFileName);
-            leafFile.open(leafFileName);
+
+            treeNodeFile.open(treeNodeFileName, std::ios::in | std::ios::out | std::ios::binary);
+            leafFile.open(leafFileName, std::ios::in | std::ios::out | std::ios::binary);
         }
 
         int getNewTreeNodePos() {

@@ -104,6 +104,20 @@
                 "clear": false
             },
             "detail": "清理所有编译生成的文件和测试文件"
+        },
+        {
+            "label": "build test_bplustree_intint",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "test_bplustree_intint.cpp",
+                "-o",
+                "test_bplustree_intint.exe"
+            ],
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": ["$gcc"]
         }
     ]
 }

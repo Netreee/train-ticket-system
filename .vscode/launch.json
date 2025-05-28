@@ -86,6 +86,16 @@
             "preLaunchTask": "编译 main 程序",
             "console": "integratedTerminal",
             "noDebug": true
+        },
+        {
+            "name": "Debug test_bplustree_intint (gdb)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/test_bplustree_intint.exe",
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "D:/msys2/mingw64/bin/gdb.exe",
+            "stopAtEntry": false
         }
     ]
 }
