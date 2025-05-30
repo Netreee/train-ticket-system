@@ -1,0 +1,21 @@
+# 编译生成的文件
+*.exe
+*.o
+*.obj
+*.dll
+*.so
+*.dylib
+
+# IDE 相关文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 数据文件
+*File
+*.dat
+
+# 其他
+.DS_Store
+Thumbs.db 
