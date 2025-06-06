@@ -82,6 +82,13 @@ namespace trainsys {
                 /* Question */
             } else if (strcmp(commandName, "release_ticket") == 0) {
                 /* Question */
+                //检查优先级还没有写
+                if(!schedulerManager->existScheduler(TrainID(argMap['i']))){
+                    std::cout << "Train not found." << std::endl;
+                }else{
+                    ticketManager->releaseTicket(schedulerManager->getScheduler(TrainID(argMap['i'])), Date(argMap['d']));
+                    std::cout << "Ticket released." << std::endl;
+                }
             } else if (strcmp(commandName, "expire_ticket") == 0) {
                 /* Question */
             } else if (strcmp(commandName, "display_route") == 0) {
