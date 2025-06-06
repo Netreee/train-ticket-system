@@ -82,14 +82,49 @@ namespace trainsys {
     }
 
     void findUserInfoByUserID(const UserID userID) {
-        /* Question */
+        if (!userManager->existUser(userID)) {
+            std::cout << "User not found." << std::endl;
+            return;
+        }
+   
+        UserInfo res = userManager->findUser(userID);
+        if (currentUser.privilege <= res.privilege) {
+            std::cout << "Permission denied" << std::endl;
+            return;
+        }
+        std::cout << "UserID: " << res.userID << std::endl;
+        std::cout << "UserName: " << res.username << std::endl;
+        std::cout << "Password: " << res.password << std::endl;
+        std::cout << "Privilege: " << res.privilege << std::endl;
     }
 
     void modifyUserPassword(const UserID userID, const char *newPassword) {
-        /* Question */
+        if (!userManager->existUser(userID)) {
+            std::cout << "User not found." << std::endl;
+            return;
+        }
+
+        UserInfo res = userManager->findUser(userID);
+        if (currentUser.privilege <= res.privilege) {
+            std::cout << "Modification forbidden." << std::endl;
+            return;
+        }
+        userManager->modifyUserPassword(userID, newPassword);
+        std::cout << "Modification succeeded." << std::endl;
     }
 
     void modifyUserPrivilege(const UserID userID, int newPrivilege) {
-        /* Question */
+        if (!userManager->existUser(userID)) {
+            std::cout << "User not found." << std::endl;
+            return;
+        }
+
+        UserInfo res = userManager->findUser(userID);
+        if (currentUser.privilege <= res.privilege) {
+            std::cout << "Modification forbidden." << std::endl;
+            return;
+        }
+        userManager->modifyUserPrivilege(userID, newPrivilege);
+        std::cout << "Modification succeeded." << std::endl;
     }
 } // namespace trainsys
