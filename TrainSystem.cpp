@@ -17,8 +17,8 @@ namespace trainsys {
     void addTrainScheduler(const TrainID &trainID, int seatNum, int passingStationNumber,
                            const StationID *stations, const int *duration, const int *price) {
         // 检查权限
-        if (currentUser.privilege < 1) {
-            std::cout << "权限不足" << std::endl;
+        if (currentUser.privilege < ADMIN_PRIVILEGE) {
+            std::cout << "Permission denied." << std::endl;
             return;
         }
         
@@ -56,7 +56,18 @@ namespace trainsys {
     }
 
     void releaseTicket(const TrainScheduler &scheduler, const Date &date) {
-        /* Question */
+        // 检查权限
+        if (currentUser.privilege < ADMIN_PRIVILEGE) {
+            std::cout << "Permission denied." << std::endl;
+            return;
+        }
+        
+        try {
+            ticketManager->releaseTicket(scheduler, date);
+            std::cout << "发布车票成功" << std::endl;
+        } catch (const std::exception& e) {
+            std::cout << "发布车票失败: " << e.what() << std::endl;
+        }
     }
 
     void expireTicket(const TrainID &trainID, const Date &date) {
@@ -230,13 +241,15 @@ namespace trainsys {
     }
 
     void addUser(const UserID userID, const char *username, const char* password) {
+        // 检查权限
+        if (currentUser.privilege < ADMIN_PRIVILEGE) {
+            std::cout << "Permission denied." << std::endl;
+            return;
+        }
+        
         if (userManager->existUser(userID)) {
             std::cout << "User ID existed." << std::endl;
-            return ;
-        }
-        if (currentUser.userID == -1) {
-            std::cout << "Permission denied." << std::endl;
-            return ;
+            return;
         }
 
         userManager->insertUser(userID, username, password, 0);

@@ -22,10 +22,18 @@ namespace trainsys {
     }
 
     String StationManager::getStationName(const StationID &stationID) {
-        /* Question */
+        String ans = idToName.find(stationID);
+        if (ans == String()) { // 如果未找到（BinarySearchTable::find 在未找到时返回 ValueType()，即空字符串）
+            throw std::runtime_error("站点不存在");
+        }
+        return ans;
     }
 
     StationID StationManager::getStationID(const char *stationName) {
-        /* Question */
+        StationID ans = nameToID.find(String(stationName));
+        if (ans == 0) { // 如果未找到（BinarySearchTable::find 在未找到时返回 ValueType()，即 0）
+            throw std::runtime_error("站点不存在");
+        }
+        return ans;
     }
 }
