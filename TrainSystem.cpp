@@ -182,11 +182,95 @@ namespace trainsys {
     }
 
     void orderTicket(const TrainID &trainID, const Date &date, const StationID &departureStation) {
-        /* Question */
+        while (waitingList->isBusy()){
+            PurchaseInfo purchaseInfo = waitingList->getFrontPurchaseInfo();
+            waitingList->removeHeadFromWaitingList();
+            std::cout << "Processing request from User " << purchaseInfo.userID << std::endl;
+    
+            if(purchaseInfo.isOrdering()){
+            // 购票信息
+            int remainingTickets = queryRemainingTicket(purchaseInfo.trainID, purchaseInfo.date, purchaseInfo.departureStation);
+            if(remainingTickets < purchaseInfo.type){
+                std::cout << "No enough tickets or scheduler not exists. Order failed." << std::endl; //任务失败
+            }else{
+                ticketManager->updateSeat(purchaseInfo.trainID, purchaseInfo.date, purchaseInfo.departureStation, -purchaseInfo.type);
+                
+                TrainScheduler schedule = schedulerManager->getScheduler(purchaseInfo.trainID);
+                int id = schedule.findStation(purchaseInfo.departureStation);
+                int duration = schedule.getDuration(id);
+                int price = schedule.getPrice(id);
+                StationID arrivalStation = schedule.getStation(id + 1);
+                
+                tripManager->addTrip(purchaseInfo.userID, TripInfo(
+                    purchaseInfo.trainID, purchaseInfo.departureStation, arrivalStation, purchaseInfo.type, duration, price, purchaseInfo.date
+                ));    
+                std::cout << "Order succeeded." << std::endl;
+                }
+            }else{
+            // 退票信息
+            ticketManager->updateSeat(purchaseInfo.trainID, purchaseInfo.date, purchaseInfo.departureStation, -purchaseInfo.type);
+            
+            TrainScheduler schedule = schedulerManager->getScheduler(purchaseInfo.trainID);
+            int id = schedule.findStation(purchaseInfo.departureStation);
+            int duration = schedule.getDuration(id);
+            int price = schedule.getPrice(id);
+            StationID arrivalStation = schedule.getStation(id + 1);
+    
+            tripManager->removeTrip(purchaseInfo.userID, TripInfo(
+                purchaseInfo.trainID, purchaseInfo.departureStation, arrivalStation, -purchaseInfo.type, duration, price, purchaseInfo.date
+            ));
+            std::cout << "Refund succeeded." << std::endl;
+            }
+        }
+        //添加任务
+        waitingList->addToWaitingList(PurchaseInfo(currentUser.userID, trainID, date, departureStation, +1));
+        std::cout << "Ordering request has added to waiting list." << std::endl;
     }
 
     void refundTicket(const TrainID &trainID, const Date &date, const StationID &departureStation) {
-        /* Question */
+        while (waitingList->isBusy()){
+            PurchaseInfo purchaseInfo = waitingList->getFrontPurchaseInfo();
+            waitingList->removeHeadFromWaitingList();
+            std::cout << "Processing request from User " << purchaseInfo.userID << std::endl;
+    
+            if(purchaseInfo.isOrdering()){
+            // 购票信息
+            int remainingTickets = queryRemainingTicket(purchaseInfo.trainID, purchaseInfo.date, purchaseInfo.departureStation);
+            if(remainingTickets < purchaseInfo.type){
+                std::cout << "No enough tickets or scheduler not exists. Order failed." << std::endl; //任务失败
+            }else{
+                ticketManager->updateSeat(purchaseInfo.trainID, purchaseInfo.date, purchaseInfo.departureStation, -purchaseInfo.type);
+                
+                TrainScheduler schedule = schedulerManager->getScheduler(purchaseInfo.trainID);
+                int id = schedule.findStation(purchaseInfo.departureStation);
+                int duration = schedule.getDuration(id);
+                int price = schedule.getPrice(id);
+                StationID arrivalStation = schedule.getStation(id + 1);
+                
+                tripManager->addTrip(purchaseInfo.userID, TripInfo(
+                    purchaseInfo.trainID, purchaseInfo.departureStation, arrivalStation, purchaseInfo.type, duration, price, purchaseInfo.date
+                ));    
+                std::cout << "Order succeeded." << std::endl;
+                }
+            }else{
+            // 退票信息
+            ticketManager->updateSeat(purchaseInfo.trainID, purchaseInfo.date, purchaseInfo.departureStation, -purchaseInfo.type);
+            
+            TrainScheduler schedule = schedulerManager->getScheduler(purchaseInfo.trainID);
+            int id = schedule.findStation(purchaseInfo.departureStation);
+            int duration = schedule.getDuration(id);
+            int price = schedule.getPrice(id);
+            StationID arrivalStation = schedule.getStation(id + 1);
+    
+            tripManager->removeTrip(purchaseInfo.userID, TripInfo(
+                purchaseInfo.trainID, purchaseInfo.departureStation, arrivalStation, -purchaseInfo.type, duration, price, purchaseInfo.date
+            ));
+            std::cout << "Refund succeeded." << std::endl;
+            }
+        }
+        //添加任务
+        waitingList->addToWaitingList(PurchaseInfo(currentUser.userID, trainID, date, departureStation, -1));
+        std::cout << "Refunding request has added to waiting list." << std::endl;
     }
 
     void findAllRoute(const StationID departureID, const StationID arrivalID) {
