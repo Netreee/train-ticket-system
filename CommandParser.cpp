@@ -83,13 +83,14 @@ namespace trainsys {
             } else if (strcmp(commandName, "release_ticket") == 0) {
                 /* Question */
             } else if (strcmp(commandName, "expire_ticket") == 0) {
-                /* Question */
+                expireTicket(TrainID(argMap['i']), Date(argMap['d']));
             } else if (strcmp(commandName, "display_route") == 0) {
                 /* Question */
             } else if (strcmp(commandName, "query_best_path") == 0) {
                 /* Question */
             } else if (strcmp(commandName, "query_remaining") == 0) {
-                /* Question */
+                int remaining = queryRemainingTicket(TrainID(argMap['i']), Date(argMap['d']), stationManager->getStationID(argMap['f']));
+                std::cout << "Remaining ticket:" << remaining << std::endl;
             } else if (strcmp(commandName, "buy_ticket") == 0) {
                 /* Question */
             } else if (strcmp(commandName, "query_order") == 0) {
