@@ -10,7 +10,6 @@ namespace trainsys {
     }
 
     int TicketManager::querySeat(const TrainID &trainID, const Date &date, const StationID &stationID) {
-        /* Question */
         seqList<TicketInfo> relatedInfo = ticketInfo.find(trainID);
         for (int i = 0; i < relatedInfo.length(); ++i) {
             if (relatedInfo.visit(i).date == date && relatedInfo.visit(i).departureStation == stationID) {
@@ -21,7 +20,6 @@ namespace trainsys {
     }
 
     int TicketManager::updateSeat(const TrainID &trainID, const Date &date, const StationID &stationID, int delta) {
-        /* Question */
         return 0;
     }
 
@@ -42,12 +40,16 @@ namespace trainsys {
     }
 
     void TicketManager::expireTicket(const TrainID &trainID, const Date &date) {
-        /* Question */
         seqList<TicketInfo> relatedInfo = ticketInfo.find(trainID);
-        for (int i = 0; i < relatedInfo.length(); ++i) {
-            if (relatedInfo.visit(i).date == date) {
-                ticketInfo.remove(trainID, relatedInfo.visit(i));
+        if(relatedInfo.length() == 0){
+            std::cout << "Train not found." << std::endl;  //没有找到trainID
+        }else{
+            for (int i = 0; i < relatedInfo.length(); ++i) {
+                if (relatedInfo.visit(i).date == date) {
+                    ticketInfo.remove(trainID, relatedInfo.visit(i));
+                }
             }
+            std::cout << "Ticket expired." << std::endl;
         }
     }
 }
