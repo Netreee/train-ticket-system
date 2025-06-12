@@ -79,7 +79,7 @@ namespace trainsys {
     }
 
     int queryRemainingTicket(const TrainID &trainID, const Date &date, const StationID &departureStation) {
-        /* Question */
+        return ticketManager->querySeat(trainID, date, departureStation);
     }
 
     bool trySatisfyOrder() {
