@@ -20,7 +20,16 @@ namespace trainsys {
     }
 
     int TicketManager::updateSeat(const TrainID &trainID, const Date &date, const StationID &stationID, int delta) {
-        return 0;
+        seqList<TicketInfo> relatedInfo = ticketInfo.find(trainID);
+            for (int i = 0; i < relatedInfo.length(); ++i) {
+                if (relatedInfo.visit(i).date == date && relatedInfo.visit(i).departureStation == stationID) {
+                    TicketInfo updatedInfo = relatedInfo.visit(i);
+                    updatedInfo.seatNum += delta;
+                    ticketInfo.modify(trainID, relatedInfo.visit(i), updatedInfo);
+                    return relatedInfo.visit(i).price;
+                }
+            }
+        return -1; // 出错，没有找到符合条件的车票
     }
 
     void TicketManager::releaseTicket(const TrainScheduler &scheduler, const Date &date) {
