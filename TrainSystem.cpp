@@ -71,11 +71,35 @@ namespace trainsys {
     }
 
     void expireTicket(const TrainID &trainID, const Date &date) {
-        /* Question */
+        // 检查权限
+        if (currentUser.privilege < ADMIN_PRIVILEGE) {
+            std::cout << "Permission denied." << std::endl;
+            return;
+        }
+        
+        try {
+            ticketManager->expireTicket(trainID, date);
+            std::cout << "车票过期操作成功" << std::endl;
+        } catch (const std::exception& e) {
+            std::cout << "车票过期操作失败: " << e.what() << std::endl;
+        }
     }
 
     int queryRemainingTicket(const TrainID &trainID, const Date &date, const StationID &departureStation) {
-        /* Question */
+        // 检查列车是否存在
+        if (!schedulerManager->existScheduler(trainID)) {
+            std::cout << "列车不存在" << std::endl;
+            return -1;
+        }
+        
+        // 查询余票
+        int remaining = ticketManager->querySeat(trainID, date, departureStation);
+        if (remaining == -1) {
+            std::cout << "该日期该站点无票务信息" << std::endl;
+            return -1;
+        }
+        
+        return remaining;
     }
 
     bool trySatisfyOrder() {
@@ -178,11 +202,123 @@ namespace trainsys {
     }
 
     void orderTicket(const TrainID &trainID, const Date &date, const StationID &departureStation) {
-        /* Question */
+        // 检查用户是否登录
+        if (currentUser.userID == -1) {
+            std::cout << "请先登录" << std::endl;
+            return;
+        }
+        
+        // 检查列车是否存在
+        if (!schedulerManager->existScheduler(trainID)) {
+            std::cout << "列车不存在" << std::endl;
+            return;
+        }
+        
+        TrainScheduler scheduler = schedulerManager->getScheduler(trainID);
+        
+        // 找到出发站在列车路线中的位置
+        int departureIdx = scheduler.findStation(departureStation);
+        if (departureIdx == -1) {
+            std::cout << "该列车不经过指定站点" << std::endl;
+            return;
+        }
+        
+        // 检查是否为最后一站（不能从最后一站出发）
+        if (departureIdx >= scheduler.getPassingStationNum() - 1) {
+            std::cout << "不能从终点站购票" << std::endl;
+            return;
+        }
+        
+        // 检查从出发站到后续所有站点的余票
+        int minSeats = scheduler.getSeatNum();  // 初始化为最大座位数
+        for (int i = departureIdx; i < scheduler.getPassingStationNum() - 1; i++) {
+            int remainingSeats = ticketManager->querySeat(trainID, date, scheduler.getStation(i));
+            if (remainingSeats == -1) {  // 该站点没有票务信息
+                std::cout << "该日期车票尚未发布" << std::endl;
+                return;
+            }
+            minSeats = std::min(minSeats, remainingSeats);
+        }
+        
+        // 如果有足够的座位，直接购票
+        if (minSeats > 0) {
+            // 更新所有相关站点的座位数
+            for (int i = departureIdx; i < scheduler.getPassingStationNum() - 1; i++) {
+                ticketManager->updateSeat(trainID, date, scheduler.getStation(i), -1);
+            }
+            
+            // 创建行程信息
+            TripInfo tripInfo(trainID, departureStation, 
+                             scheduler.getStation(scheduler.getPassingStationNum() - 1),
+                             1,  // 购买一张票
+                             scheduler.getDuration(departureIdx),
+                             scheduler.getPrice(departureIdx),
+                             date);
+            
+            tripManager->addTrip(currentUser.userID, tripInfo);
+            
+            std::cout << "购票成功" << std::endl;
+            std::cout << "列车: " << trainID << std::endl;
+            std::cout << "日期: " << date << std::endl;
+            std::cout << "出发站: " << stationManager->getStationName(departureStation) << std::endl;
+            std::cout << "票价: " << scheduler.getPrice(departureIdx) << " 元" << std::endl;
+        } else {
+            std::cout << "购票功能尚未完全实现（候补功能）" << std::endl;
+        }
     }
 
     void refundTicket(const TrainID &trainID, const Date &date, const StationID &departureStation) {
-        /* Question */
+        // 检查用户是否登录
+        if (currentUser.userID == -1) {
+            std::cout << "请先登录" << std::endl;
+            return;
+        }
+        
+        // 查找用户的行程
+        seqList<TripInfo> trips = tripManager->queryTrip(currentUser.userID);
+        bool found = false;
+        TripInfo targetTrip;
+        
+        for (int i = 0; i < trips.length(); i++) {
+            TripInfo trip = trips.visit(i);
+            if (trip.trainID == trainID && trip.date == date && trip.departureStation == departureStation) {
+                targetTrip = trip;
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            std::cout << "未找到对应的行程记录" << std::endl;
+            return;
+        }
+        
+        // 获取列车调度信息
+        if (!schedulerManager->existScheduler(trainID)) {
+            std::cout << "列车信息已失效" << std::endl;
+            return;
+        }
+        
+        TrainScheduler scheduler = schedulerManager->getScheduler(trainID);
+        int departureIdx = scheduler.findStation(departureStation);
+        
+        if (departureIdx == -1) {
+            std::cout << "站点信息已失效" << std::endl;
+            return;
+        }
+        
+        // 恢复所有相关站点的座位数
+        for (int i = departureIdx; i < scheduler.getPassingStationNum() - 1; i++) {
+            ticketManager->updateSeat(trainID, date, scheduler.getStation(i), 1);
+        }
+        
+        // 从用户行程中移除
+        tripManager->removeTrip(currentUser.userID, targetTrip);
+        
+        std::cout << "退票成功" << std::endl;
+        std::cout << "已退还票价: " << targetTrip.price << " 元" << std::endl;
+        
+        std::cout << "退票功能尚未完全实现（候补处理功能）" << std::endl;
     }
 
     void findAllRoute(const StationID departureID, const StationID arrivalID) {
@@ -233,11 +369,45 @@ namespace trainsys {
     }
 
     void login(const UserID userID, const char *password) {
-        /* Question */
+        // 检查用户是否已经登录
+        if (currentUser.userID != -1) {
+            std::cout << "Already logged in." << std::endl;
+            return;
+        }
+        
+        // 检查用户是否存在
+        if (!userManager->existUser(userID)) {
+            std::cout << "User not found." << std::endl;
+            return;
+        }
+        
+        // 验证密码
+        UserInfo user = userManager->findUser(userID);
+        if (strcmp(user.password, password) != 0) {
+            std::cout << "Wrong password." << std::endl;
+            return;
+        }
+        
+        // 登录成功
+        currentUser = user;
+        std::cout << "Login succeeded." << std::endl;
+        std::cout << "Welcome, " << currentUser.username << "!" << std::endl;
     }
 
     void logout() {
-        /* Question */
+        // 检查是否已登录
+        if (currentUser.userID == -1) {
+            std::cout << "Not logged in." << std::endl;
+            return;
+        }
+        
+        std::cout << "Goodbye, " << currentUser.username << "!" << std::endl;
+        
+        // 重置当前用户为未登录状态
+        currentUser = UserInfo();
+        currentUser.userID = -1;
+        
+        std::cout << "Logout succeeded." << std::endl;
     }
 
     void addUser(const UserID userID, const char *username, const char* password) {

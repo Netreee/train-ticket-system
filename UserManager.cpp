@@ -13,18 +13,31 @@ namespace trainsys {
     }
 
     UserInfo UserManager::findUser(const UserID &userID) {
-        /* Question */
+        return userInfoTable.find(userID);
     }
 
     void UserManager::removeUser(const UserID &userID) {
-        /* Question */
+        userInfoTable.remove(userID);
     }
 
     void UserManager::modifyUserPrivilege(const UserID &userID, int newPrevilege) {
-        /* Question */
+        if (existUser(userID)) {
+            UserInfo user = findUser(userID);
+            user.privilege = newPrevilege;
+            userInfoTable.remove(userID);
+            userInfoTable.insert(userID, user);
+        }
     }
 
     void UserManager::modifyUserPassword(const UserID &userID, const char *newPassword) {
-        /* Question */
+        if (existUser(userID)) {
+            UserInfo user = findUser(userID);
+            int len = strlen(newPassword);
+            if (len > MAX_PASSWORD_LEN) len = MAX_PASSWORD_LEN;
+            memcpy(user.password, newPassword, len);
+            user.password[len] = '\0';
+            userInfoTable.remove(userID);
+            userInfoTable.insert(userID, user);
+        }
     }
 } // namespace trainsys

@@ -1,6 +1,7 @@
 #include "TrainSystem.h"
 #include "CommandParser.h"
 #include "Utils.h"
+#include <windows.h>
 
 namespace trainsys {
     extern UserInfo currentUser;
@@ -32,10 +33,11 @@ namespace trainsys {
 }
 
 int main() {
+    SetConsoleOutputCP(CP_UTF8);
     trainsys::init();
     char command[30000];
     while (std::cin.getline(command, 30000)) {
-        printf("get command: %s\n", command);
+        // printf("get command: %s\n", command);
         if (trainsys::parseCommand(command) == 1) {
             break;
         }

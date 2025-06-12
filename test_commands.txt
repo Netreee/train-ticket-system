@@ -1,0 +1,65 @@
+register admin admin123
+login admin admin123
+add_train 2024-03-20 G102 北京 上海 08:00 13:30 商务座 100 一等座 200 二等座 300
+query_train 2024-03-20 G102
+query_ticket 北京 上海 2024-03-20
+buy_ticket admin G102 2024-03-20 北京 上海 商务座 1
+query_order admin
+refund_ticket admin G102 2024-03-20 北京 上海 商务座 1
+query_order admin
+
+# 测试异常情况
+register admin admin123  # 重复注册
+login admin wrongpass    # 错误密码
+add_train 2024-03-20 G102 北京 上海 08:00 13:30 商务座 100  # 重复添加列车
+query_train 2024-03-20 G103  # 查询不存在的列车
+buy_ticket admin G102 2024-03-20 北京 上海 商务座 101  # 超出座位数
+refund_ticket admin G102 2024-03-20 北京 上海 商务座 2  # 退票数量超过购买数量
+
+# 测试多列车场景
+add_train 2024-03-20 G103 北京 上海 09:00 14:30 商务座 50 一等座 100 二等座 150
+add_train 2024-03-20 G104 北京 上海 10:00 15:30 商务座 30 一等座 60 二等座 90
+query_ticket 北京 上海 2024-03-20
+
+# 测试多用户场景
+register user1 user123
+register user2 user123
+login user1 user123
+buy_ticket user1 G102 2024-03-20 北京 上海 商务座 1
+login user2 user123
+buy_ticket user2 G103 2024-03-20 北京 上海 商务座 1
+query_order user1
+query_order user2
+
+# 测试日期查询
+query_ticket 北京 上海 2024-03-21  # 查询未来日期
+query_ticket 北京 上海 2024-03-19  # 查询过去日期
+
+# 测试座位类型
+add_train 2024-03-20 G105 北京 上海 11:00 16:30 商务座 20 一等座 40 二等座 60 硬座 100
+query_train 2024-03-20 G105
+buy_ticket user1 G105 2024-03-20 北京 上海 硬座 2
+query_order user1
+
+# 测试退票后重新购票
+refund_ticket user1 G105 2024-03-20 北京 上海 硬座 1
+buy_ticket user2 G105 2024-03-20 北京 上海 硬座 1
+query_order user1
+query_order user2
+
+# 测试查询所有订单
+query_order admin
+query_order user1
+query_order user2
+
+# 测试登出后操作
+logout
+query_order admin  # 应该提示未登录
+login admin admin123
+query_order admin  # 应该可以正常查询
+
+# 测试数据持久性
+logout
+login admin admin123
+query_order admin  # 应该能看到之前的订单
+query_train 2024-03-20 G102  # 应该能看到之前添加的列车

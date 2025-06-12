@@ -22,18 +22,24 @@ namespace trainsys {
     }
 
     UserInfo &UserInfo::operator =(const UserInfo &rhs) {
-        /* Question */
+        if (this != &rhs) {
+            this->userID = rhs.userID;
+            this->privilege = rhs.privilege;
+            memcpy(this->username, rhs.username, MAX_USERNAME_LEN + 1);
+            memcpy(this->password, rhs.password, MAX_PASSWORD_LEN + 1);
+        }
+        return *this;
     }
 
     bool UserInfo::operator ==(const UserInfo &rhs) const {
-        /* Question */
+        return this->userID == rhs.userID;
     }
 
     bool UserInfo::operator !=(const UserInfo &rhs) const {
-        /* Question */
+        return !(*this == rhs);
     }
 
     bool UserInfo::operator <(const UserInfo &rhs) const {
-        /* Question */
+        return this->userID < rhs.userID;
     }
 } // namespace trainsys

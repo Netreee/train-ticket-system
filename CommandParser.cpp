@@ -55,6 +55,12 @@ namespace trainsys {
     int parseCommand(const char *command) {
         int exitCode = 0;
         seqList<char *> tokens = splitTokens(command, ' ');
+        
+        // 清空参数映射
+        for (int i = 0; i < 200; i++) {
+            argMap[i] = nullptr;
+        }
+        
         for (int i = 1; i < tokens.length(); i += 2) {
             if (tokens.visit(i)[0] == '-') {
                 argMap[(int) tokens.visit(i)[1]] = tokens.visit(i + 1);
@@ -67,38 +73,91 @@ namespace trainsys {
             if (strcmp(commandName, "register") == 0) {
                 addUser(stringToNumber(argMap['i']), argMap['u'], argMap['p']);
             } else if (strcmp(commandName, "login") == 0) {
-                /* Question */
+                login(stringToNumber(argMap['i']), argMap['p']);
             } else if (strcmp(commandName, "logout") == 0) {
-                /* Question */
+                logout();
             } else if (strcmp(commandName, "modify_password") == 0) {
-                /* Question */
+                modifyUserPassword(stringToNumber(argMap['i']), argMap['p']);
             } else if (strcmp(commandName, "modify_privilege") == 0) {
-                /* Question */
+                modifyUserPrivilege(stringToNumber(argMap['i']), stringToNumber(argMap['g']));
             } else if (strcmp(commandName, "query_profile") == 0) {
-                /* Question */
+                findUserInfoByUserID(stringToNumber(argMap['i']));
             } else if (strcmp(commandName, "add_train") == 0) {
-                /* Question */
+                // 解析站点、时长和价格数组
+                seqList<char *> stationTokens = splitTokens(argMap['s'], '|');
+                seqList<char *> durationTokens = splitTokens(argMap['t'], '|');
+                seqList<char *> priceTokens = splitTokens(argMap['p'], '|');
+                
+                int stationNum = stationTokens.length();
+                StationID *stations = new StationID[stationNum];
+                int *durations = new int[stationNum - 1];
+                int *prices = new int[stationNum - 1];
+                
+                // 转换站点名称为ID
+                for (int i = 0; i < stationNum; i++) {
+                    stations[i] = stationManager->getStationID(stationTokens.visit(i));
+                }
+                
+                // 转换时长和价格
+                for (int i = 0; i < stationNum - 1; i++) {
+                    durations[i] = stringToNumber(durationTokens.visit(i));
+                    prices[i] = stringToNumber(priceTokens.visit(i));
+                }
+                
+                addTrainScheduler(TrainID(argMap['i']), stringToNumber(argMap['n']), 
+                                stationNum, stations, durations, prices);
+                
+                // 清理内存
+                delete[] stations;
+                delete[] durations;
+                delete[] prices;
+                for (int i = 0; i < stationTokens.length(); i++) {
+                    delete[] stationTokens.visit(i);
+                }
+                for (int i = 0; i < durationTokens.length(); i++) {
+                    delete[] durationTokens.visit(i);
+                }
+                for (int i = 0; i < priceTokens.length(); i++) {
+                    delete[] priceTokens.visit(i);
+                }
             } else if (strcmp(commandName, "query_train") == 0) {
-                /* Question */
+                queryTrainScheduler(TrainID(argMap['i']));
             } else if (strcmp(commandName, "release_ticket") == 0) {
-                /* Question */
+                if (schedulerManager->existScheduler(TrainID(argMap['i']))) {
+                    TrainScheduler scheduler = schedulerManager->getScheduler(TrainID(argMap['i']));
+                    releaseTicket(scheduler, Date(argMap['d']));
+                } else {
+                    std::cout << "列车不存在" << std::endl;
+                }
             } else if (strcmp(commandName, "expire_ticket") == 0) {
                 expireTicket(TrainID(argMap['i']), Date(argMap['d']));
             } else if (strcmp(commandName, "display_route") == 0) {
-                /* Question */
+                StationID fromStation = stationManager->getStationID(argMap['f']);
+                StationID toStation = stationManager->getStationID(argMap['t']);
+                findAllRoute(fromStation, toStation);
             } else if (strcmp(commandName, "query_best_path") == 0) {
-                /* Question */
+                StationID fromStation = stationManager->getStationID(argMap['f']);
+                StationID toStation = stationManager->getStationID(argMap['t']);
+                int preference = (argMap['o'] && strcmp(argMap['o'], "cost") == 0) ? 1 : 0;
+                findBestRoute(fromStation, toStation, preference);
             } else if (strcmp(commandName, "query_remaining") == 0) {
                 int remaining = queryRemainingTicket(TrainID(argMap['i']), Date(argMap['d']), stationManager->getStationID(argMap['f']));
-                std::cout << "Remaining ticket:" << remaining << std::endl;
+                if (remaining >= 0) {
+                    std::cout << "Remaining ticket: " << remaining << std::endl;
+                }
             } else if (strcmp(commandName, "buy_ticket") == 0) {
-                /* Question */
+                StationID departureStation = stationManager->getStationID(argMap['f']);
+                orderTicket(TrainID(argMap['i']), Date(argMap['d']), departureStation);
             } else if (strcmp(commandName, "query_order") == 0) {
-                /* Question */
+                queryMyTicket();
             } else if (strcmp(commandName, "refund_ticket") == 0) {
-                /* Question */
+                StationID departureStation = stationManager->getStationID(argMap['f']);
+                refundTicket(TrainID(argMap['i']), Date(argMap['d']), departureStation);
             } else if (strcmp(commandName, "query_accessibility") == 0) {
-                /* Question */
+                StationID fromStation = stationManager->getStationID(argMap['f']);
+                StationID toStation = stationManager->getStationID(argMap['t']);
+                bool accessible = railwayGraph->checkStationAccessibility(fromStation, toStation);
+                std::cout << "站点可达性: " << (accessible ? "可达" : "不可达") << std::endl;
             } else if (strcmp(commandName, "exit") == 0) {
                 exitCode = 1;
             } else {

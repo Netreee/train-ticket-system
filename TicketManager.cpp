@@ -10,23 +10,33 @@ namespace trainsys {
     }
 
     int TicketManager::querySeat(const TrainID &trainID, const Date &date, const StationID &stationID) {
-        /* Question */
         seqList<TicketInfo> relatedInfo = ticketInfo.find(trainID);
         for (int i = 0; i < relatedInfo.length(); ++i) {
             if (relatedInfo.visit(i).date == date && relatedInfo.visit(i).departureStation == stationID) {
                 return relatedInfo.visit(i).seatNum;
             }
         }
-    return -1; //没有找到符合条件的车票
+        return -1; //没有找到符合条件的车票
     }
 
     int TicketManager::updateSeat(const TrainID &trainID, const Date &date, const StationID &stationID, int delta) {
-        /* Question */
-        return 0;
+        seqList<TicketInfo> relatedInfo = ticketInfo.find(trainID);
+        for (int i = 0; i < relatedInfo.length(); ++i) {
+            TicketInfo ticket = relatedInfo.visit(i);
+            if (ticket.date == date && ticket.departureStation == stationID) {
+                // 更新座位数
+                ticket.seatNum += delta;
+                // 先删除旧记录
+                ticketInfo.remove(trainID, relatedInfo.visit(i));
+                // 再插入新记录
+                ticketInfo.insert(trainID, ticket);
+                return ticket.seatNum;
+            }
+        }
+        return -1; // 没有找到符合条件的车票
     }
 
     void TicketManager::releaseTicket(const TrainScheduler &scheduler, const Date &date) {
-        /* Question */
         int passingStationNum = scheduler.getPassingStationNum();
         for (int i = 0; i + 1 < passingStationNum; ++i) {
             TicketInfo newTicket;
@@ -42,7 +52,6 @@ namespace trainsys {
     }
 
     void TicketManager::expireTicket(const TrainID &trainID, const Date &date) {
-        /* Question */
         seqList<TicketInfo> relatedInfo = ticketInfo.find(trainID);
         for (int i = 0; i < relatedInfo.length(); ++i) {
             if (relatedInfo.visit(i).date == date) {
