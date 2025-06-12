@@ -71,7 +71,11 @@ namespace trainsys {
     }
 
     void expireTicket(const TrainID &trainID, const Date &date) {
-        /* Question */
+        if (currentUser.userID == -1 && currentUser.privilege < ADMIN_PRIVILEGE){ //检查登录/权限
+            std::cout << "Permission denied." << std::endl;
+        }else{
+            ticketManager->expireTicket(trainID, date);
+        }
     }
 
     int queryRemainingTicket(const TrainID &trainID, const Date &date, const StationID &departureStation) {
