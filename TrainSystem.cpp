@@ -401,9 +401,9 @@ namespace trainsys {
     }
 
     void addUser(const UserID userID, const char *username, const char* password) {
-        // 检查权限
-        if (currentUser.privilege < ADMIN_PRIVILEGE) {
-            std::cout << "Permission denied." << std::endl;
+        // 检查是否有用户登录
+        if (currentUser.userID != -1) {
+            std::cout << "Permission denied. Please logout first." << std::endl;
             return;
         }
         

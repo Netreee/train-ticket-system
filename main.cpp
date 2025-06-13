@@ -22,12 +22,16 @@ namespace trainsys {
         tripManager = new TripManager("trip.dat");
         railwayGraph = new RailwayGraph();
 
-        puts("admin login");
-        if (userManager->existUser(0)) {
-            currentUser = userManager->findUser(0);
-        } else {
-            currentUser = UserInfo(0, "admin", "admin", 100);
+        // 初始化当前用户为未登录状态
+        currentUser = UserInfo();
+        currentUser.userID = -1;
+
+        // 如果管理员账号不存在，则创建一个（但不自动登录）
+        if (!userManager->existUser(0)) {
             userManager->insertUser(0, "admin", "admin", 100);
+            puts("Admin account created (ID: 0, password: admin)");
+        } else {
+            puts("Admin account exists");
         }
     }
 }
