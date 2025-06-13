@@ -334,7 +334,7 @@ namespace trainsys {
             String departureName = stationManager->getStationName(departureID);
             String arrivalName = stationManager->getStationName(arrivalID);
         } catch (const std::exception& e) {
-            std::cout << "站点不存在" << std::endl;
+            std::cout << "Disconnected. No route found." << std::endl;
             return;
         }
         
@@ -355,7 +355,7 @@ namespace trainsys {
             String arrivalName = stationManager->getStationName(arrivalID);
             // 如果能获取到站点名称，说明站点存在
         } catch (const std::exception& e) {
-            std::cout << "站点不存在" << std::endl;
+            std::cout << "Disconnected. No route found." << std::endl;
             return;
         }
         
