@@ -136,9 +136,13 @@ namespace trainsys {
                     std::cout << "Train not found." << std::endl;
                 }
             } else if (strcmp(commandName, "display_route") == 0) {
-                StationID fromStation = stationManager->getStationID(argMap['s']);
-                StationID toStation = stationManager->getStationID(argMap['t']);
-                findAllRoute(fromStation, toStation);
+                try{
+                    StationID fromStation = stationManager->getStationID(argMap['s']);
+                    StationID toStation = stationManager->getStationID(argMap['t']);
+                    findAllRoute(fromStation, toStation);
+                }catch (const std::exception& e) {
+                    std::cout << "Disconnected. No route found." << std::endl;
+                }
             } else if (strcmp(commandName, "query_best_path") == 0) {
                 StationID fromStation = stationManager->getStationID(argMap['s']);
                 StationID toStation = stationManager->getStationID(argMap['t']);
