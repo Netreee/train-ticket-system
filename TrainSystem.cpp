@@ -182,40 +182,51 @@ namespace trainsys {
     }
 
     void queryMyTicket() {
-        // 检查用户是否登录
-        if (currentUser.userID == -1) {
-            std::cout << "请先登录" << std::endl;
-            return;
-        }
-
-        // 获取用户的所有行程
-        seqList<TripInfo> trips = tripManager->queryTrip(currentUser.userID);
-        
-        if (trips.length() == 0) {
-            std::cout << "您当前没有行程" << std::endl;
-            return;
-        }
-
-        // 显示所有行程信息
-        std::cout << "您的行程信息：" << std::endl;
-        for (int i = 0; i < trips.length(); i++) {
-            TripInfo trip = trips.visit(i);
-            String departureName = stationManager->getStationName(trip.departureStation);
-            String arrivalName = stationManager->getStationName(trip.arrivalStation);
+        //处理等候池
+        while (waitingList->isBusy()){
+            PurchaseInfo purchaseInfo = waitingList->getFrontPurchaseInfo();
+            waitingList->removeHeadFromWaitingList();
+            std::cout << "Processing request from User " << purchaseInfo.userID << std::endl;
+    
+            if(purchaseInfo.isOrdering()){
+            // 购票信息
+            int remainingTickets = queryRemainingTicket(purchaseInfo.trainID, purchaseInfo.date, purchaseInfo.departureStation);
+            if(remainingTickets < purchaseInfo.type){
+                std::cout << "No enough tickets or scheduler not exists. Order failed." << std::endl; //任务失败
+            }else{
+                ticketManager->updateSeat(purchaseInfo.trainID, purchaseInfo.date, purchaseInfo.departureStation, -purchaseInfo.type);
+                
+                TrainScheduler schedule = schedulerManager->getScheduler(purchaseInfo.trainID);
+                int id = schedule.findStation(purchaseInfo.departureStation);
+                int duration = schedule.getDuration(id);
+                int price = schedule.getPrice(id);
+                StationID arrivalStation = schedule.getStation(id + 1);
+                
+                tripManager->addTrip(purchaseInfo.userID, TripInfo(
+                    purchaseInfo.trainID, purchaseInfo.departureStation, arrivalStation, purchaseInfo.type, duration, price, purchaseInfo.date
+                ));    
+                std::cout << "Order succeeded." << std::endl;
+                }
+            }else{
+            // 退票信息
+            ticketManager->updateSeat(purchaseInfo.trainID, purchaseInfo.date, purchaseInfo.departureStation, -purchaseInfo.type);
             
-            std::cout << "行程 " << (i + 1) << ":" << std::endl;
-            std::cout << "  列车: " << trip.trainID << std::endl;
-            std::cout << "  出发站: " << departureName << std::endl;
-            std::cout << "  到达站: " << arrivalName << std::endl;
-            std::cout << "  日期: " << trip.date << std::endl;
-            std::cout << "  票价: " << trip.price << " 元" << std::endl;
-            std::cout << "  时长: " << trip.duration << " 分钟" << std::endl;
-            std::cout << "  票数: " << trip.ticketNumber << std::endl;
-            
-            // 显示该行程的路线信息
-            std::cout << "  路线详情:" << std::endl;
-            railwayGraph->displayRoute(trip.departureStation, trip.arrivalStation);
-            std::cout << std::endl;
+            TrainScheduler schedule = schedulerManager->getScheduler(purchaseInfo.trainID);
+            int id = schedule.findStation(purchaseInfo.departureStation);
+            int duration = schedule.getDuration(id);
+            int price = schedule.getPrice(id);
+            StationID arrivalStation = schedule.getStation(id + 1);
+    
+            tripManager->removeTrip(purchaseInfo.userID, TripInfo(
+                purchaseInfo.trainID, purchaseInfo.departureStation, arrivalStation, -purchaseInfo.type, duration, price, purchaseInfo.date
+            ));
+            std::cout << "Refund succeeded." << std::endl;
+            }
+        }
+        std::cout << "TripInfo:" << std::endl;
+        seqList<TripInfo> tripInfo = tripManager->queryTrip(currentUser.userID);
+        for (int i = 0; i < tripInfo.length(); i++) {
+            std::cout << tripInfo.visit(i) << std::endl;
         }
     }
 
