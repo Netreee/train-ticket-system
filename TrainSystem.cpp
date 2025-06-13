@@ -52,7 +52,25 @@ namespace trainsys {
         
         // 获取并显示列车调度信息
         TrainScheduler scheduler = schedulerManager->getScheduler(trainID);
-        std::cout << scheduler << std::endl;
+        //打印
+        std::cout << "TrainID: " << scheduler.getTrainID() << std::endl;
+        std::cout << "SeatNum: " << scheduler.getSeatNum() << std::endl;
+        std::cout << "PassingStationNum: " << scheduler.getPassingStationNum() << std::endl;
+        std::cout << "Stations: " ;
+        for(int i=0; i<scheduler.getPassingStationNum();i++){
+            std::cout << scheduler.getStation(i) << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Duration: ";
+        for(int i=0; i<scheduler.getPassingStationNum();i++){
+            std::cout << scheduler.getDuration(i) << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Price: ";
+        for(int i=0; i<scheduler.getPassingStationNum();i++){
+            std::cout << scheduler.getPrice(i) << " ";
+        }
+        std::cout << std::endl;
     }
 
     void releaseTicket(const TrainScheduler &scheduler, const Date &date) {
