@@ -150,9 +150,7 @@ namespace trainsys {
                 findBestRoute(fromStation, toStation, preference);
             } else if (strcmp(commandName, "query_remaining") == 0) {
                 int remaining = queryRemainingTicket(TrainID(argMap['i']), Date(argMap['d']), stationManager->getStationID(argMap['s']));
-                if (remaining >= 0) {
-                    std::cout << "Remaining ticket: " << remaining << std::endl;
-                }
+                std::cout << "Remaining ticket: " << remaining << std::endl;
             } else if (strcmp(commandName, "buy_ticket") == 0) {
                 StationID departureStation = stationManager->getStationID(argMap['s']);
                 orderTicket(TrainID(argMap['i']), Date(argMap['d']), departureStation);
