@@ -158,7 +158,7 @@ namespace trainsys {
                     int remaining = queryRemainingTicket(TrainID(argMap['i']), Date(argMap['d']), departureStation);
                     std::cout << "Remaining ticket: " << remaining << std::endl;
                 } catch (const std::exception& e) {
-                    std::cout << "站点不存在" << std::endl;
+                    std::cout << "Remaining ticket: -1" << std::endl;
                 }
             } else if (strcmp(commandName, "buy_ticket") == 0) {
                 try {
