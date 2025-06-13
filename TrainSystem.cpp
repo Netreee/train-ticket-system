@@ -188,6 +188,12 @@ namespace trainsys {
             waitingList->removeHeadFromWaitingList();
             std::cout << "Processing request from User " << purchaseInfo.userID << std::endl;
     
+            // 检查是否是无效的StationID（表示站点不存在）
+            if (purchaseInfo.departureStation == StationID(-1)) {
+                std::cout << "站点不存在" << std::endl;
+                continue;
+            }
+    
             if(purchaseInfo.isOrdering()){
             // 购票信息
             int remainingTickets = queryRemainingTicket(purchaseInfo.trainID, purchaseInfo.date, purchaseInfo.departureStation);
@@ -231,6 +237,13 @@ namespace trainsys {
     }
 
     void orderTicket(const TrainID &trainID, const Date &date, const StationID &departureStation) {
+        // 检查是否是无效的StationID（表示站点不存在）
+        if (departureStation == StationID(-1)) {
+            waitingList->addToWaitingList(PurchaseInfo(currentUser.userID, trainID, date, departureStation, +1));
+            std::cout << "Ordering request has added to waiting list." << std::endl;
+            return;
+        }
+        
         while (waitingList->isBusy()){
             PurchaseInfo purchaseInfo = waitingList->getFrontPurchaseInfo();
             waitingList->removeHeadFromWaitingList();
@@ -277,6 +290,13 @@ namespace trainsys {
     }
 
     void refundTicket(const TrainID &trainID, const Date &date, const StationID &departureStation) {
+        // 检查是否是无效的StationID（表示站点不存在）
+        if (departureStation == StationID(-1)) {
+            waitingList->addToWaitingList(PurchaseInfo(currentUser.userID, trainID, date, departureStation, -1));
+            std::cout << "Refunding request has added to waiting list." << std::endl;
+            return;
+        }
+        
         while (waitingList->isBusy()){
             PurchaseInfo purchaseInfo = waitingList->getFrontPurchaseInfo();
             waitingList->removeHeadFromWaitingList();

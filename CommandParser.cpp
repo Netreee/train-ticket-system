@@ -165,7 +165,8 @@ namespace trainsys {
                     StationID departureStation = stationManager->getStationID(argMap['f']);
                     orderTicket(TrainID(argMap['i']), Date(argMap['d']), departureStation);
                 } catch (const std::exception& e) {
-                    std::cout << "站点不存在" << std::endl;
+                    // 传递特殊的无效StationID (-1)，让orderTicket函数处理
+                    orderTicket(TrainID(argMap['i']), Date(argMap['d']), StationID(-1));
                 }
             } else if (strcmp(commandName, "query_order") == 0) {
                 queryMyTicket();
@@ -174,7 +175,8 @@ namespace trainsys {
                     StationID departureStation = stationManager->getStationID(argMap['f']);
                     refundTicket(TrainID(argMap['i']), Date(argMap['d']), departureStation);
                 } catch (const std::exception& e) {
-                    std::cout << "站点不存在" << std::endl;
+                    // 传递特殊的无效StationID (-1)，让refundTicket函数处理
+                    refundTicket(TrainID(argMap['i']), Date(argMap['d']), StationID(-1));
                 }
             } else if (strcmp(commandName, "query_accessibility") == 0) {
                 try {
