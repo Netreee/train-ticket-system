@@ -97,7 +97,7 @@ namespace trainsys {
         
         try {
             ticketManager->expireTicket(trainID, date);
-            std::cout << "车票过期操作成功" << std::endl;
+            std::cout << "Ticket expired." << std::endl;
         } catch (const std::exception& e) {
             std::cout << "车票过期操作失败: " << e.what() << std::endl;
         }
