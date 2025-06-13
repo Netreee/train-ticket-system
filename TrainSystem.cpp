@@ -334,7 +334,7 @@ namespace trainsys {
         
         // 检查站点是否可达
         if (!railwayGraph->checkStationAccessibility(departureID, arrivalID)) {
-            std::cout << "站点之间不可达" << std::endl;
+            std::cout << "Disconnected. No route found." << std::endl;
             return;
         }
         
@@ -355,14 +355,14 @@ namespace trainsys {
         
         // 检查站点是否可达
         if (!railwayGraph->checkStationAccessibility(departureID, arrivalID)) {
-            std::cout << "站点之间不可达" << std::endl;
+            std::cout << "Disconnected. No route found." << std::endl;
             return;
         }
         
         // 根据偏好查找最佳路线
         // preference: 0表示按时间最短，1表示按价格最低
         if (preference != 0 && preference != 1) {
-            std::cout << "无效的偏好设置" << std::endl;
+            std::cout << "Invalid preference: p" << std::endl;
             return;
         }
         
