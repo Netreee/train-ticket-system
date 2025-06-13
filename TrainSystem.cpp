@@ -24,7 +24,7 @@ namespace trainsys {
         
         // 检查列车是否已存在
         if (schedulerManager->existScheduler(trainID)) {
-            std::cout << "列车已存在" << std::endl;
+            std::cout << "TrainID existed." << std::endl;
             return;
         }
         
@@ -37,7 +37,7 @@ namespace trainsys {
                 railwayGraph->addRoute(stations[i], stations[i + 1], duration[i], price[i], trainID);
             }
             
-            std::cout << "添加列车成功" << std::endl;
+            std::cout << "Train added." << std::endl;
         } catch (const std::exception& e) {
             std::cout << "添加列车失败: " << e.what() << std::endl;
         }
@@ -46,7 +46,7 @@ namespace trainsys {
     void queryTrainScheduler(const TrainID &trainID) {
         // 检查列车是否存在
         if (!schedulerManager->existScheduler(trainID)) {
-            std::cout << "列车不存在" << std::endl;
+            std::cout << "Train not found." << std::endl;
             return;
         }
         
