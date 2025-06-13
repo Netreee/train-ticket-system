@@ -106,14 +106,14 @@ namespace trainsys {
     int queryRemainingTicket(const TrainID &trainID, const Date &date, const StationID &departureStation) {
         // 检查列车是否存在
         if (!schedulerManager->existScheduler(trainID)) {
-            std::cout << "列车不存在" << std::endl;
+            //std::cout << "列车不存在" << std::endl;
             return -1;
         }
         
         // 查询余票
         int remaining = ticketManager->querySeat(trainID, date, departureStation);
         if (remaining == -1) {
-            std::cout << "该日期该站点无票务信息" << std::endl;
+            //std::cout << "该日期该站点无票务信息" << std::endl;
             return -1;
         }
         
