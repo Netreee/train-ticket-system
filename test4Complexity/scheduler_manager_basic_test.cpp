@@ -228,7 +228,7 @@ void testBatchOperations(SimpleTest& test, int batchSize = 100) {
 void testPerformance(SimpleTest& test) {
     std::cout << "\n========== 性能测试 ==========" << std::endl;
     
-    std::vector<int> testSizes = {100, 500, 1000, 2000};
+    std::vector<int> testSizes = {100, 500, 1000, 5000};
     
     for (int size : testSizes) {
         std::cout << "\n--- 测试规模: " << size << " ---" << std::endl;

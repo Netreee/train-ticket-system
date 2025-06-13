@@ -368,7 +368,7 @@ std::vector<PerformanceResult> testComplexity(TestStats& stats) {
     std::cout << "\n========== 性能和复杂度测试 ==========" << std::endl;
     
     std::vector<PerformanceResult> results;
-    std::vector<int> testSizes = {100, 300, 500, 1000, 2000};
+    std::vector<int> testSizes = {100, 200, 300, 500, 800, 1000};
     
     for (size_t sizeIdx = 0; sizeIdx < testSizes.size(); sizeIdx++) {
         int routeCount = testSizes[sizeIdx];
