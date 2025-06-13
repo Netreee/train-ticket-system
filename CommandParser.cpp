@@ -136,29 +136,29 @@ namespace trainsys {
                     std::cout << "Train not found." << std::endl;
                 }
             } else if (strcmp(commandName, "display_route") == 0) {
-                StationID fromStation = stationManager->getStationID(argMap['f']);
+                StationID fromStation = stationManager->getStationID(argMap['s']);
                 StationID toStation = stationManager->getStationID(argMap['t']);
                 findAllRoute(fromStation, toStation);
             } else if (strcmp(commandName, "query_best_path") == 0) {
-                StationID fromStation = stationManager->getStationID(argMap['f']);
+                StationID fromStation = stationManager->getStationID(argMap['s']);
                 StationID toStation = stationManager->getStationID(argMap['t']);
                 int preference = (argMap['o'] && strcmp(argMap['o'], "cost") == 0) ? 1 : 0;
                 findBestRoute(fromStation, toStation, preference);
             } else if (strcmp(commandName, "query_remaining") == 0) {
-                int remaining = queryRemainingTicket(TrainID(argMap['i']), Date(argMap['d']), stationManager->getStationID(argMap['f']));
+                int remaining = queryRemainingTicket(TrainID(argMap['i']), Date(argMap['d']), stationManager->getStationID(argMap['s']));
                 if (remaining >= 0) {
                     std::cout << "Remaining ticket: " << remaining << std::endl;
                 }
             } else if (strcmp(commandName, "buy_ticket") == 0) {
-                StationID departureStation = stationManager->getStationID(argMap['f']);
+                StationID departureStation = stationManager->getStationID(argMap['s']);
                 orderTicket(TrainID(argMap['i']), Date(argMap['d']), departureStation);
             } else if (strcmp(commandName, "query_order") == 0) {
                 queryMyTicket();
             } else if (strcmp(commandName, "refund_ticket") == 0) {
-                StationID departureStation = stationManager->getStationID(argMap['f']);
+                StationID departureStation = stationManager->getStationID(argMap['s']);
                 refundTicket(TrainID(argMap['i']), Date(argMap['d']), departureStation);
             } else if (strcmp(commandName, "query_accessibility") == 0) {
-                StationID fromStation = stationManager->getStationID(argMap['f']);
+                StationID fromStation = stationManager->getStationID(argMap['s']);
                 StationID toStation = stationManager->getStationID(argMap['t']);
                 bool accessible = railwayGraph->checkStationAccessibility(fromStation, toStation);
                 std::cout << "站点可达性: " << (accessible ? "可达" : "不可达") << std::endl;
