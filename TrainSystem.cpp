@@ -371,37 +371,37 @@ namespace trainsys {
     void login(const UserID userID, const char *password) {
         // 检查用户是否已经登录
         if (currentUser.userID != -1) {
-            std::cout << "Already logged in." << std::endl;
+            std::cout << "Only one user can login in at the same time." << std::endl;
             return;
         }
         
         // 检查用户是否存在
         if (!userManager->existUser(userID)) {
-            std::cout << "User not found." << std::endl;
+            std::cout << "User not found. Login failed." << std::endl;
             return;
         }
         
         // 验证密码
         UserInfo user = userManager->findUser(userID);
         if (strcmp(user.password, password) != 0) {
-            std::cout << "Wrong password." << std::endl;
+            std::cout << "Wrong password. Login failed." << std::endl;
             return;
         }
         
         // 登录成功
         currentUser = user;
         std::cout << "Login succeeded." << std::endl;
-        std::cout << "Welcome, " << currentUser.username << "!" << std::endl;
+        //std::cout << "Welcome, " << currentUser.username << "!" << std::endl;
     }
 
     void logout() {
         // 检查是否已登录
         if (currentUser.userID == -1) {
-            std::cout << "Not logged in." << std::endl;
+            std::cout << "No user logined." << std::endl;
             return;
         }
         
-        std::cout << "Goodbye, " << currentUser.username << "!" << std::endl;
+        //std::cout << "Goodbye, " << currentUser.username << "!" << std::endl;
         
         // 重置当前用户为未登录状态
         currentUser = UserInfo();
