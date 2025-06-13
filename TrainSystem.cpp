@@ -223,7 +223,7 @@ namespace trainsys {
             std::cout << "Refund succeeded." << std::endl;
             }
         }
-        std::cout << "TripInfo:" << std::endl;
+        //打印
         seqList<TripInfo> tripInfo = tripManager->queryTrip(currentUser.userID);
         for (int i = 0; i < tripInfo.length(); i++) {
             std::cout << tripInfo.visit(i) << std::endl;
