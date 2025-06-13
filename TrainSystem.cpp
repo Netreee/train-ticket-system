@@ -62,12 +62,12 @@ namespace trainsys {
         }
         std::cout << std::endl;
         std::cout << "Duration: ";
-        for(int i=0; i<scheduler.getPassingStationNum();i++){
+        for(int i=0; i<scheduler.getPassingStationNum()-1;i++){
             std::cout << scheduler.getDuration(i) << " ";
         }
         std::cout << std::endl;
         std::cout << "Price: ";
-        for(int i=0; i<scheduler.getPassingStationNum();i++){
+        for(int i=0; i<scheduler.getPassingStationNum()-1;i++){
             std::cout << scheduler.getPrice(i) << " ";
         }
         std::cout << std::endl;
