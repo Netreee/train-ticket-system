@@ -150,7 +150,7 @@ namespace trainsys {
                     int preference = (argMap['o'] && strcmp(argMap['o'], "cost") == 0) ? 1 : 0;
                     findBestRoute(fromStation, toStation, preference);
                 } catch (const std::exception& e) {
-                    std::cout << "Station Not Found" << std::endl;
+                    std::cout << "Disconnected. No route found." << std::endl;
                 }
             } else if (strcmp(commandName, "query_remaining") == 0) {
                 try {
