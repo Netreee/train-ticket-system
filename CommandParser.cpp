@@ -149,15 +149,15 @@ namespace trainsys {
                 int preference = (argMap['o'] && strcmp(argMap['o'], "cost") == 0) ? 1 : 0;
                 findBestRoute(fromStation, toStation, preference);
             } else if (strcmp(commandName, "query_remaining") == 0) {
-                int remaining = queryRemainingTicket(TrainID(argMap['i']), Date(argMap['d']), stationManager->getStationID(argMap['s']));
+                int remaining = queryRemainingTicket(TrainID(argMap['i']), Date(argMap['d']), stationManager->getStationID(argMap['f']));
                 std::cout << "Remaining ticket: " << remaining << std::endl;
             } else if (strcmp(commandName, "buy_ticket") == 0) {
-                StationID departureStation = stationManager->getStationID(argMap['s']);
+                StationID departureStation = stationManager->getStationID(argMap['f']);
                 orderTicket(TrainID(argMap['i']), Date(argMap['d']), departureStation);
             } else if (strcmp(commandName, "query_order") == 0) {
                 queryMyTicket();
             } else if (strcmp(commandName, "refund_ticket") == 0) {
-                StationID departureStation = stationManager->getStationID(argMap['s']);
+                StationID departureStation = stationManager->getStationID(argMap['f']);
                 refundTicket(TrainID(argMap['i']), Date(argMap['d']), departureStation);
             } else if (strcmp(commandName, "query_accessibility") == 0) {
                 StationID fromStation = stationManager->getStationID(argMap['s']);
