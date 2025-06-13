@@ -130,7 +130,11 @@ namespace trainsys {
                     std::cout << "Train not found." << std::endl;
                 }
             } else if (strcmp(commandName, "expire_ticket") == 0) {
-                expireTicket(TrainID(argMap['i']), Date(argMap['d']));
+                if (schedulerManager->existScheduler(TrainID(argMap['i']))) {
+                    expireTicket(TrainID(argMap['i']), Date(argMap['d']));
+                } else {
+                    std::cout << "Train not found." << std::endl;
+                }
             } else if (strcmp(commandName, "display_route") == 0) {
                 StationID fromStation = stationManager->getStationID(argMap['f']);
                 StationID toStation = stationManager->getStationID(argMap['t']);
