@@ -181,9 +181,9 @@ namespace trainsys {
                     StationID fromStation = stationManager->getStationID(argMap['s']);
                     StationID toStation = stationManager->getStationID(argMap['t']);
                     bool accessible = railwayGraph->checkStationAccessibility(fromStation, toStation);
-                    std::cout << "站点可达性: " << (accessible ? "可达" : "不可达") << std::endl;
+                    std::cout << (accessible ? "Accessible." : "Not accessible.") << std::endl;
                 } catch (const std::exception& e) {
-                    std::cout << "站点不存在" << std::endl;
+                    std::cout << "Not accessible." << std::endl;
                 }
             } else if (strcmp(commandName, "exit") == 0) {
                 exitCode = 1;
