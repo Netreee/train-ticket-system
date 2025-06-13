@@ -127,7 +127,7 @@ namespace trainsys {
                     TrainScheduler scheduler = schedulerManager->getScheduler(TrainID(argMap['i']));
                     releaseTicket(scheduler, Date(argMap['d']));
                 } else {
-                    std::cout << "列车不存在" << std::endl;
+                    std::cout << "Train not found." << std::endl;
                 }
             } else if (strcmp(commandName, "expire_ticket") == 0) {
                 expireTicket(TrainID(argMap['i']), Date(argMap['d']));
